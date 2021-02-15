@@ -1,0 +1,44 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.heading {
+  display: flex;
+  width: 100px;
+  height: 100px;
+  align-items: center;
+  justify-content: center;
+}
+
+.puzzle-square {
+  display: flex;
+  width: 100px;
+  height: 100px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  color: #282c34;
+  background-color: lightgrey;
+}
+
+.right-border {
+  border-right: #282c34 solid 20px;
+}
+.row-holder {
+  display:flex;
+}
+
+#col-heading-holder {
+  display:flex;
+}
