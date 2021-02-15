@@ -3,7 +3,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #303030;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -21,24 +21,23 @@
   justify-content: center;
 }
 
+.puzzle-board {
+  outline: 2px solid gray;
+  outline-offset: 2px;
+}
+
+.puzzle-row {
+  display:flex;
+}
+
 .puzzle-square {
   display: flex;
   width: 100px;
   height: 100px;
   box-sizing: border-box;
+  border: 1px solid #d0d0d0;
   align-items: center;
   justify-content: center;
-  color: #282c34;
-  background-color: lightgrey;
-}
-
-.right-border {
-  border-right: #282c34 solid 20px;
-}
-.row-holder {
-  display:flex;
-}
-
-#col-heading-holder {
-  display:flex;
+  color: black;
+  background-color: #f0f0f0;
 }
