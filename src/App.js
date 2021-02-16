@@ -7,9 +7,9 @@ function App() {
     <div className="App">
       <header className="App-header">
         <Puzzle 
-        containerArray={[1, 1, 1, 2, 2, 1, 2, 2, 2]}
-        solutionArray={[0, 0, 0, 0, 0, 1, 1, 1, 1]}
-        size={3}
+        containerArray={[1, 2, 2, 2, 2, 2, 1, 3, 3, 3, 3, 4, 1, 1, 1, 5, 3, 4, 1, 6, 1, 5, 5, 4, 1, 6, 1, 5, 5, 4, 1, 6, 6, 6, 5, 4]}
+        solutionArray={[0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1]}
+        size={6}
         />
 
       </header>
@@ -37,6 +37,7 @@ class Puzzle extends React.Component {
       <div className="puzzle-board">
         {this.renderColHeadings()}
         {rows}
+        {this.renderCheckButton()}
       </div>
     )
   }
@@ -45,9 +46,14 @@ class Puzzle extends React.Component {
     for (let i = (this.state.size * n); i < (this.state.size * (n + 1)); i++) {
       cells.push(this.renderCell(i));
     }
+    let heading = 0;
+    getRow(n, this.state.solution).forEach(cell => {
+      heading += cell;
+    });
     return (
       <div className="puzzle-row" key={n}>
-        <div className="row-heading" key={n}>?
+        <div className="row-heading" key={n}>
+          {heading}
         </div>
         {cells}
       </div>
@@ -59,7 +65,6 @@ class Puzzle extends React.Component {
     for(let i = 0; i < this.state.size; i ++) {
       let sum = 0;
       const col = getColumn(i, this.state.solution);
-      console.log(col)
       for(let j = 0; j < col.length; j++) {
         sum += col[j];
       }
@@ -108,11 +113,43 @@ class Puzzle extends React.Component {
       </Cell>
     );
   }
+
+  renderCheckButton() {
+    return(
+      <button
+        onClick={() => {this.checkCompletion()}}
+      >
+        Check!
+      </button>
+    )
+  }
+
   handleCellClick(n) {
+    // I am so confused by this
     const cells = this.state.squareValues.slice();
     cells[n] = !cells[n];
     this.setState({squareValues: cells});
   }
+
+  checkCompletion() {
+    let attempt = [];
+    let isAttemptCorrect = true;
+    this.state.squareValues.forEach(cell => {
+      if(cell) {
+        attempt.push(1);
+      }
+      else {
+        attempt.push(0);
+      }
+    });
+    for(let i = 0; i < attempt.length; i++) {
+      if(attempt[i] != this.state.solution[i]){
+        isAttemptCorrect = false;
+      }
+    }
+    this.setState({correct: isAttemptCorrect});
+  }
+
 }
 
 class Cell extends React.Component {
