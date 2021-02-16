@@ -25,7 +25,7 @@ class Puzzle extends React.Component {
       containers: this.props.containerArray,
       solution: this.props.solutionArray,
       squareValues: Array(this.props.solutionArray.length).fill(false),
-      correct: false,
+      correct: null,
     };
   }
   render() {
@@ -69,7 +69,7 @@ class Puzzle extends React.Component {
         sum += col[j];
       }
       headings.push(
-        <div class="col-heading">{sum}</div>
+        <div className="col-heading" key={i}>{sum}</div>
       );
     }
     return (
@@ -116,16 +116,20 @@ class Puzzle extends React.Component {
 
   renderCheckButton() {
     return(
-      <button
-        onClick={() => {this.checkCompletion()}}
-      >
-        Check!
-      </button>
+      <div>
+        <button
+          onClick={() => {this.checkCompletion()}}
+        >
+          Check solution
+        </button>
+        {<p id="answer-message">
+          {this.state.correct ? "correct" : "incorrect"}
+        </p>}
+      </div>
     )
   }
 
   handleCellClick(n) {
-    // I am so confused by this
     const cells = this.state.squareValues.slice();
     cells[n] = !cells[n];
     this.setState({squareValues: cells});
