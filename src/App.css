@@ -24,6 +24,7 @@
 .puzzle-board {
   outline: 2px solid gray;
   outline-offset: 2px;
+  margin: 2px;
 }
 
 .puzzle-row {
@@ -41,4 +42,28 @@
   justify-content: center;
   color: black;
   background-color: #f0f0f0;
+}
+
+.col-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3em;
+  height: 1.5em;
+}
+.row-heading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3em;
+  width: 1.5em;
+}
+
+#col-heading-holder {
+  display:flex;
+}
+
+#heading-frame-corner {
+  width: 1.5em;
+  height: 1.5em;
 }

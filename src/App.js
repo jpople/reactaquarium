@@ -25,8 +25,7 @@ class Puzzle extends React.Component {
       containers: this.props.containerArray,
       solution: this.props.solutionArray,
       squareValues: Array(this.props.solutionArray.length).fill(false),
-      hasRightBorder: Array(this.props.solutionArray.length).fill(false),
-      hasBottomBorder: Array(this.props.solutionArray.length).fill(false)
+      correct: false,
     };
   }
   render() {
@@ -36,6 +35,7 @@ class Puzzle extends React.Component {
     }
     return (
       <div className="puzzle-board">
+        {this.renderColHeadings()}
         {rows}
       </div>
     )
@@ -47,16 +47,40 @@ class Puzzle extends React.Component {
     }
     return (
       <div className="puzzle-row" key={n}>
+        <div className="row-heading" key={n}>?
+        </div>
         {cells}
       </div>
     );
   }
 
+  renderColHeadings(){
+    let headings = [];
+    for(let i = 0; i < this.state.size; i ++) {
+      let sum = 0;
+      const col = getColumn(i, this.state.solution);
+      console.log(col)
+      for(let j = 0; j < col.length; j++) {
+        sum += col[j];
+      }
+      headings.push(
+        <div class="col-heading">{sum}</div>
+      );
+    }
+    return (
+      <div id="col-heading-holder">
+        <div id="heading-frame-corner"></div>
+        {headings}
+      </div>
+    )
+  }
+
   renderCell(n) {
     // ideally I'd like to have this border logic elsewhere so it only has to be run once
-    // other improvements:
+    // other improvements to make:
     // centered on cell border rather than being all inside one cell
     // fix corners somehow?
+    // am I going about this all wrong? should I be adding extra divs to be borders? can I draw divs partially overlapping other divs?
     const borderStyleString = "2px solid black";
     const coords = getCoords(n, this.state.containers);
     let borders = {};
@@ -70,9 +94,34 @@ class Puzzle extends React.Component {
     if(bottom) {
       borders.borderBottom = borderStyleString;
     }
+    if(this.state.squareValues[n]) {
+      borders.backgroundColor = "lightskyblue"
+    }
     return (
-      <div className="puzzle-square" key={n} style={borders}>{}</div>
+      <Cell 
+      className="puzzle-square" 
+      key={n} 
+      style={borders}
+      onClick={() => this.handleCellClick(n)}
+      >
+        {}
+      </Cell>
     );
+  }
+  handleCellClick(n) {
+    const cells = this.state.squareValues.slice();
+    cells[n] = !cells[n];
+    this.setState({squareValues: cells});
+  }
+}
+
+class Cell extends React.Component {
+  render(){
+    return(
+      <div className="puzzle-square" style={this.props.style} onClick={() => this.props.onClick()}>
+
+      </div>
+    )
   }
 }
 
