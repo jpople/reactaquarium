@@ -11,6 +11,7 @@ function App() {
         solutionArray={[0, 0, 0, 0, 0, 1, 1, 1, 1]}
         size={3}
         />
+
       </header>
     </div>
   );
@@ -24,8 +25,9 @@ class Puzzle extends React.Component {
       containers: this.props.containerArray,
       solution: this.props.solutionArray,
       squareValues: Array(this.props.solutionArray.length).fill(false),
+      hasRightBorder: Array(this.props.solutionArray.length).fill(false),
+      hasBottomBorder: Array(this.props.solutionArray.length).fill(false)
     };
-    console.log(this.state);
   }
   render() {
     const rows = [];
@@ -51,8 +53,25 @@ class Puzzle extends React.Component {
   }
 
   renderCell(n) {
+    // ideally I'd like to have this border logic elsewhere so it only has to be run once
+    // other improvements:
+    // centered on cell border rather than being all inside one cell
+    // fix corners somehow?
+    const borderStyleString = "2px solid black";
+    const coords = getCoords(n, this.state.containers);
+    let borders = {};
+    // checks to see if the cell needs a right border (i.e. is it in a different container than the cell immediately to its right)
+    const right = this.state.containers[n] != this.state.containers[n + 1] && coords.col != (this.state.size - 1)
+    if(right) {
+      borders.borderRight = borderStyleString;
+    }
+    // same deal for columns
+    const bottom = getColumn(coords.col, this.state.containers)[coords.row] !=  getColumn(coords.col, this.state.containers)[coords.row + 1] && coords.row != (this.state.size - 1);    
+    if(bottom) {
+      borders.borderBottom = borderStyleString;
+    }
     return (
-      <div className="puzzle-square" key={n}>{this.state.containers[n]}</div>
+      <div className="puzzle-square" key={n} style={borders}>{}</div>
     );
   }
 }
@@ -65,13 +84,23 @@ function getRow(n, array) {
 
 function getColumn(n, array) {
   // gets the nth column of a provided (square) array
-  const size = Math.sqrt(array.length);
-  const col = [];
-  array.forEach(entry => {
-    if (entry % n == 0) {
-      col.push(entry);
+  let size = Math.sqrt(array.length);
+  let col = [];
+  for (let i = 0; i < array.length; i++){
+    if (i % size == n % size) {
+      col.push(array[i]);
     }
-  })
+  }
+  return col;
+}
+
+function getCoords(n, array) {
+  // gets the coordinates (row, column) of the nth square on a board
+  const size = Math.sqrt(array.length);
+  return {
+    row: Math.floor(n / size),
+    col: (n % size)
+  }
 }
 
 export default App;

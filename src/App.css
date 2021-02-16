@@ -32,8 +32,9 @@
 
 .puzzle-square {
   display: flex;
-  width: 100px;
-  height: 100px;
+  width: 3em;
+  height: 3em;
+  font-size: 1em;
   box-sizing: border-box;
   border: 1px solid #d0d0d0;
   align-items: center;
