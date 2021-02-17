@@ -1,70 +1,36 @@
-# Getting Started with Create React App
+# ReactAquarium
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+ReactAquarium is an interface for solving Aquarium logic puzzles.
 
-## Available Scripts
+### How to Run
 
-In the project directory, you can run:
+Requires [node.js](https://nodejs.org/en/).
 
-### `npm start`
+Clone the project into a new directory, then in the project directory, run `npm install` and then `npm start`.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Aquarium Puzzles
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Aquarium puzzles consist of a square grid divided into regions. To solve the puzzle, mark squares as "filled" such that:
 
-### `npm test`
+1. Each row and each column has a number of filled squares in it equal to the number in its heading.
+2. If a square is filled, each other square in the same region that is in the same row or a lower row is also filled.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+By default, clicking a square will toggle whether it's filled, represented by blue coloring.  By clicking "mark as empty" you can color squares pink to note that they can't be filled. 
 
-### `npm run build`
+The solution-checking function only checks whether the correct squares are filled and doesn't care whether empty squares are pink.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Planned Improvements
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2021-02-17:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* Functionality:
+    * Create API from which the app can get more puzzles, and eventually have features like choosing size or difficulty
+    * Add ability undo/redo/reset
+    * Get rid of filled/empty toggle button and add a better way to mark empty squares, likely right-click or shift-click or similar
+    * Add additional options to:
+        * Mark completed rows/columns
+        * Display errors in real time
+        * Autofill containers on marking one square
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+* Style:
+    * Make it look less bad

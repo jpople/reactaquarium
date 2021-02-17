@@ -5,14 +5,11 @@ import { render } from '@testing-library/react';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
         <Puzzle 
         containerArray={[1, 1, 1, 2, 3, 3, 4, 1, 5, 2, 2, 6, 4, 5, 5, 7, 2, 6, 5, 5, 7, 7, 8, 8, 7, 7, 7, 8, 8, 8, 9, 9, 7, 7, 7, 7]}
         solutionArray={[1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0]}
         size={6}
         />
-
-      </header>
     </div>
   );
 }
@@ -24,7 +21,7 @@ class Puzzle extends React.Component {
       size: this.props.size,
       containers: this.props.containerArray,
       solution: this.props.solutionArray,
-      squareValues: Array(this.props.solutionArray.length).fill(false),
+      fullMarks: Array(this.props.solutionArray.length).fill(false),
       emptyMarks: Array(this.props.solutionArray.length).fill(false),
       correct: null,
       fillMode: true,
@@ -39,8 +36,14 @@ class Puzzle extends React.Component {
       <div className="puzzle-board">
         {this.renderColHeadings()}
         {rows}
-        {this.renderButtonPanel()}
-        {this.renderCompletionMessage()}
+        <div className="puzzle-info">
+          <div>
+            {this.renderButtonPanel()}
+          </div>
+          <div>
+            {this.renderCompletionMessage()}
+          </div>
+        </div>
       </div>
     )
   }
@@ -101,7 +104,7 @@ class Puzzle extends React.Component {
     if(bottom) {
       borders.borderBottom = borderStyleString;
     }
-    if(this.state.squareValues[n]) {
+    if(this.state.fullMarks[n]) {
       borders.backgroundColor = "lightskyblue"
     }
     if(this.state.emptyMarks[n]){
@@ -143,12 +146,12 @@ class Puzzle extends React.Component {
 
   handleCellClick(n) {
     if(this.state.fillMode) {
-      const cells = this.state.squareValues.slice();
+      const cells = this.state.fullMarks.slice();
       cells[n] = !cells[n];
-      this.setState({squareValues: cells}); 
+      this.setState({fullMarks: cells}); 
     }
     else {
-      if (!this.state.squareValues[n]) {
+      if (!this.state.fullMarks[n]) {
         const empties = this.state.emptyMarks.slice();
         empties[n] = !empties[n];
         this.setState({emptyMarks: empties});
@@ -159,7 +162,7 @@ class Puzzle extends React.Component {
   checkCompletion() {
     let attempt = [];
     let isAttemptCorrect = true;
-    this.state.squareValues.forEach(cell => {
+    this.state.fullMarks.forEach(cell => {
       if(cell) {
         attempt.push(1);
       }
