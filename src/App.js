@@ -7,8 +7,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <Puzzle 
-        containerArray={[1, 2, 2, 2, 2, 2, 1, 3, 3, 3, 3, 4, 1, 1, 1, 5, 3, 4, 1, 6, 1, 5, 5, 4, 1, 6, 1, 5, 5, 4, 1, 6, 6, 6, 5, 4]}
-        solutionArray={[0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1]}
+        containerArray={[1, 1, 1, 2, 3, 3, 4, 1, 5, 2, 2, 6, 4, 5, 5, 7, 2, 6, 5, 5, 7, 7, 8, 8, 7, 7, 7, 8, 8, 8, 9, 9, 7, 7, 7, 7]}
+        solutionArray={[1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0]}
         size={6}
         />
 
@@ -25,7 +25,9 @@ class Puzzle extends React.Component {
       containers: this.props.containerArray,
       solution: this.props.solutionArray,
       squareValues: Array(this.props.solutionArray.length).fill(false),
+      emptyMarks: Array(this.props.solutionArray.length).fill(false),
       correct: null,
+      fillMode: true,
     };
   }
   render() {
@@ -37,7 +39,8 @@ class Puzzle extends React.Component {
       <div className="puzzle-board">
         {this.renderColHeadings()}
         {rows}
-        {this.renderCheckButton()}
+        {this.renderButtonPanel()}
+        {this.renderCompletionMessage()}
       </div>
     )
   }
@@ -85,7 +88,6 @@ class Puzzle extends React.Component {
     // other improvements to make:
     // centered on cell border rather than being all inside one cell
     // fix corners somehow?
-    // am I going about this all wrong? should I be adding extra divs to be borders? can I draw divs partially overlapping other divs?
     const borderStyleString = "2px solid black";
     const coords = getCoords(n, this.state.containers);
     let borders = {};
@@ -102,6 +104,10 @@ class Puzzle extends React.Component {
     if(this.state.squareValues[n]) {
       borders.backgroundColor = "lightskyblue"
     }
+    if(this.state.emptyMarks[n]){
+      borders.backgroundColor = "pink"
+    }
+
     return (
       <Cell 
       className="puzzle-square" 
@@ -114,7 +120,7 @@ class Puzzle extends React.Component {
     );
   }
 
-  renderCheckButton() {
+  renderButtonPanel() {
     return(
       <div>
         <button
@@ -122,17 +128,32 @@ class Puzzle extends React.Component {
         >
           Check solution
         </button>
-        {<p id="answer-message">
-          {this.state.correct ? "correct" : "incorrect"}
-        </p>}
+        <button onClick={() => {this.setState({fillMode: !this.state.fillMode})}}>
+        {this.state.fillMode ? "Mark as empty" : "Mark as full"}
+      </button>
       </div>
     )
   }
 
+  renderCompletionMessage(){
+    if(this.state.correct != null) {
+      return <span>{this.state.correct ? "Solution is correct!" : "Errors are present."}</span>
+    }
+  }
+
   handleCellClick(n) {
-    const cells = this.state.squareValues.slice();
-    cells[n] = !cells[n];
-    this.setState({squareValues: cells});
+    if(this.state.fillMode) {
+      const cells = this.state.squareValues.slice();
+      cells[n] = !cells[n];
+      this.setState({squareValues: cells}); 
+    }
+    else {
+      if (!this.state.squareValues[n]) {
+        const empties = this.state.emptyMarks.slice();
+        empties[n] = !empties[n];
+        this.setState({emptyMarks: empties});
+      }
+    }
   }
 
   checkCompletion() {
@@ -153,7 +174,6 @@ class Puzzle extends React.Component {
     }
     this.setState({correct: isAttemptCorrect});
   }
-
 }
 
 class Cell extends React.Component {
