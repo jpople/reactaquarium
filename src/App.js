@@ -94,16 +94,25 @@ class Puzzle extends React.Component {
     const borderStyleString = "2px solid black";
     const coords = getCoords(n, this.state.containers);
     let borders = {};
-    // checks to see if the cell needs a right border (i.e. is it in a different container than the cell immediately to its right)
+    // checks to see if the cell needs horizontal borders (i.e. is it in a different container than the cell immediately to its side)
     const right = this.state.containers[n] != this.state.containers[n + 1] && coords.col != (this.state.size - 1)
     if(right) {
       borders.borderRight = borderStyleString;
+    }
+    const left = this.state.containers[n] != this.state.containers[n - 1] && coords.col != 0
+    if(left) {
+      borders.borderLeft = borderStyleString;
     }
     // same deal for columns
     const bottom = getColumn(coords.col, this.state.containers)[coords.row] !=  getColumn(coords.col, this.state.containers)[coords.row + 1] && coords.row != (this.state.size - 1);    
     if(bottom) {
       borders.borderBottom = borderStyleString;
     }
+    const top = getColumn(coords.col, this.state.containers)[coords.row] !=  getColumn(coords.col, this.state.containers)[coords.row - 1] && coords.row != 0;
+    if(top) {
+      borders.borderTop = borderStyleString;
+    }
+    // assign appropriate styling
     if(this.state.fullMarks[n]) {
       borders.backgroundColor = "lightskyblue"
     }
@@ -133,7 +142,12 @@ class Puzzle extends React.Component {
         </button>
         <button onClick={() => {this.setState({fillMode: !this.state.fillMode})}}>
         {this.state.fillMode ? "Mark as empty" : "Mark as full"}
-      </button>
+        </button>
+        <button
+          onClick={() => {this.reset()}}
+        >
+          Reset
+        </button>
       </div>
     )
   }
@@ -176,6 +190,14 @@ class Puzzle extends React.Component {
       }
     }
     this.setState({correct: isAttemptCorrect});
+  }
+
+  reset(){
+    this.setState({
+      fullMarks: Array(this.props.solutionArray.length).fill(false),
+      emptyMarks: Array(this.props.solutionArray.length).fill(false),
+      correct: null,
+    });
   }
 }
 
