@@ -24,7 +24,6 @@ class Puzzle extends React.Component {
       fullMarks: Array(this.props.solutionArray.length).fill(false),
       emptyMarks: Array(this.props.solutionArray.length).fill(false),
       correct: null,
-      fillMode: true,
     };
   }
   render() {
@@ -126,6 +125,7 @@ class Puzzle extends React.Component {
       key={n} 
       style={borders}
       onClick={() => this.handleCellClick(n)}
+      onContextMenu={(e) => this.handleCellRightClick(e, n)}
       >
         {}
       </Cell>
@@ -139,9 +139,6 @@ class Puzzle extends React.Component {
           onClick={() => {this.checkCompletion()}}
         >
           Check solution
-        </button>
-        <button onClick={() => {this.setState({fillMode: !this.state.fillMode})}}>
-        {this.state.fillMode ? "Mark as empty" : "Mark as full"}
         </button>
         <button
           onClick={() => {this.reset()}}
@@ -158,19 +155,19 @@ class Puzzle extends React.Component {
     }
   }
 
+  handleCellRightClick(e, n) {
+    e.preventDefault();
+    if (!this.state.fullMarks[n]) {
+      const empties = this.state.emptyMarks.slice();
+      empties[n] = !empties[n];
+      this.setState({emptyMarks: empties});
+    }
+  }
+
   handleCellClick(n) {
-    if(this.state.fillMode) {
-      const cells = this.state.fullMarks.slice();
-      cells[n] = !cells[n];
-      this.setState({fullMarks: cells}); 
-    }
-    else {
-      if (!this.state.fullMarks[n]) {
-        const empties = this.state.emptyMarks.slice();
-        empties[n] = !empties[n];
-        this.setState({emptyMarks: empties});
-      }
-    }
+    const cells = this.state.fullMarks.slice();
+    cells[n] = !cells[n];
+    this.setState({fullMarks: cells});
   }
 
   checkCompletion() {
@@ -204,8 +201,10 @@ class Puzzle extends React.Component {
 class Cell extends React.Component {
   render(){
     return(
-      <div className="puzzle-square" style={this.props.style} onClick={() => this.props.onClick()}>
-
+      <div className="puzzle-square" 
+      style={this.props.style} 
+      onClick={() => this.props.onClick()}
+      onContextMenu={(e) => this.props.onContextMenu(e)}>
       </div>
     )
   }
