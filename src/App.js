@@ -24,6 +24,7 @@ class Puzzle extends React.Component {
       fullMarks: Array(this.props.solutionArray.length).fill(false),
       emptyMarks: Array(this.props.solutionArray.length).fill(false),
       correct: null,
+      fill_mode: true,
     };
   }
   render() {
@@ -88,7 +89,7 @@ class Puzzle extends React.Component {
   renderCell(n) {
     // ideally I'd like to have this border logic elsewhere so it only has to be run once
     // other improvements to make:
-    // centered on cell border rather than being all inside one cell
+    // centered on cell border rather than being all inside one cell (done)
     // fix corners somehow?
     const borderStyleString = "2px solid black";
     const coords = getCoords(n, this.state.containers);
@@ -135,6 +136,7 @@ class Puzzle extends React.Component {
   renderButtonPanel() {
     return(
       <div>
+        <br></br>
         <button
           onClick={() => {this.checkCompletion()}}
         >
@@ -145,28 +147,101 @@ class Puzzle extends React.Component {
         >
           Reset
         </button>
+        <button
+          onClick={() => {this.toggle_fill_mode()}}
+        >
+          Toggle fill mode (currently {this.state.fill_mode ? "ON" : "OFF"})
+        </button>
       </div>
     )
   }
 
   renderCompletionMessage(){
     if(this.state.correct != null) {
-      return <span>{this.state.correct ? "Solution is correct!" : "Errors are present."}</span>
+      return <div>{this.state.correct ? "Solution is correct!" : "Errors are present."}</div>
     }
   }
 
   handleCellRightClick(e, n) {
     e.preventDefault();
-    if (!this.state.fullMarks[n]) {
-      const empties = this.state.emptyMarks.slice();
-      empties[n] = !empties[n];
-      this.setState({emptyMarks: empties});
+    const empties = this.state.emptyMarks.slice();
+    if (this.state.fill_mode) {
+      if (!this.state.emptyMarks[n]) {
+        // right-clicked a white cell in fill mode; fills red down to that level
+        var valid_move = true;
+        var impacted_cells = [];
+        for(var i = 0; i < this.state.fullMarks.length; i ++) {
+          if ((this.state.containers[i] == this.state.containers[n]) && (getCoords(i, this.state.containers).row <= getCoords(n, this.state.containers).row)) {
+            impacted_cells.push(i);
+          }
+        }
+        //check to see if any of the cells that would be redded by this move are already blue; if they are, ignore it
+        impacted_cells.forEach(cell => {
+          if (this.state.fullMarks[cell]) {
+            valid_move = false;
+          }
+        });
+        if (valid_move) {
+          impacted_cells.forEach(cell => {
+            empties[cell] = true;
+          })
+        }
+      }
+      else {
+        // right-clicked a red cell in fill mode; removes red at that level and below
+        var fills = [];
+        for (var i = 0; i < this.state.containers.length; i++){
+          if ((this.state.containers[i] == this.state.containers[n]) && (getCoords(i, this.state.containers).row >= getCoords(n, this.state.containers).row)) {
+            fills.push(i);
+          }
+        }
+        fills.forEach(target_cell => {
+          empties[target_cell] = false;
+        });
+      }
     }
+    else {
+      //clicked a white cell outside of fill mode; turns it red if it isn't blue
+      if (!this.state.fullMarks[n]) {
+        empties[n] = !empties[n];
+      }
+    }
+    this.setState({emptyMarks: empties});
   }
 
   handleCellClick(n) {
     const cells = this.state.fullMarks.slice();
-    cells[n] = !cells[n];
+    if (this.state.fill_mode) {
+      if (!this.state.fullMarks[n]) {
+        // clicked on an empty cell in fill mode; fills container with blue to that level
+        // get a list of all cells that need to be filled
+        var fills = [];
+        for (var i = 0; i < this.state.containers.length; i++) {
+          if ((this.state.containers[i] == this.state.containers[n]) && (getCoords(i, this.state.containers).row >= getCoords(n, this.state.containers).row)){
+            fills.push(i);
+          }
+        }
+        fills.forEach(target_cell => {
+          cells[target_cell] = true;
+        });
+      }
+      else {
+        // clicked a full cell in fill mode; empties blue from container at that level and above
+        var empties = [];
+        for (var i = 0; i < this.state.containers.length; i++) {
+          if ((this.state.containers[i] == this.state.containers[n]) && (getCoords(i, this.state.containers).row <= getCoords(n, this.state.containers).row)){
+            empties.push(i);
+          }
+        }
+        empties.forEach(target_cell => {
+          cells[target_cell] = false;
+        });
+      }
+    }
+    else {
+      // clicked a cell in non-fill mode; toggles clicked cell
+      cells[n] = !cells[n];
+    }
     this.setState({fullMarks: cells});
   }
 
@@ -195,6 +270,12 @@ class Puzzle extends React.Component {
       emptyMarks: Array(this.props.solutionArray.length).fill(false),
       correct: null,
     });
+  }
+
+  toggle_fill_mode() {
+    this.setState({
+      fill_mode: !this.state.fill_mode,
+    })
   }
 }
 
