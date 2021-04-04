@@ -24,7 +24,8 @@ class Puzzle extends React.Component {
       fullMarks: Array(this.props.solutionArray.length).fill(false),
       emptyMarks: Array(this.props.solutionArray.length).fill(false),
       correct: null,
-      fill_mode: true,
+      fill_mode: false,
+      header_hints: false,
     };
   }
   render() {
@@ -58,9 +59,7 @@ class Puzzle extends React.Component {
     });
     return (
       <div className="puzzle-row" key={n}>
-        <div className="row-heading" key={n}>
-          {heading}
-        </div>
+        {this.renderRowHeading(n)}
         {cells}
       </div>
     );
@@ -69,13 +68,8 @@ class Puzzle extends React.Component {
   renderColHeadings(){
     let headings = [];
     for(let i = 0; i < this.state.size; i ++) {
-      let sum = 0;
-      const col = getColumn(i, this.state.solution);
-      for(let j = 0; j < col.length; j++) {
-        sum += col[j];
-      }
       headings.push(
-        <div className="col-heading" key={i}>{sum}</div>
+        this.renderColHeading(i)
       );
     }
     return (
@@ -84,6 +78,62 @@ class Puzzle extends React.Component {
         {headings}
       </div>
     )
+  }
+
+  renderRowHeading(n) {
+    let correct_row_value = 0;
+    let current_row_value = 0;
+    let style = {};
+    
+    getRow(n, this.state.solution).forEach(cell => {
+      correct_row_value += cell;
+    });
+    getRow(n, this.state.fullMarks).forEach(cell => {
+      if (cell) {current_row_value ++;}
+    });
+    if (this.state.header_hints) {
+      if (correct_row_value == current_row_value) {
+        style.color = "gray";
+      }
+      else if (correct_row_value < current_row_value) {
+        style.color = "red";
+      }
+    }
+    return (
+      <div className="row-heading" key={n} style={style}>
+        {correct_row_value}
+      </div>
+    );
+  }
+
+  renderColHeading(n) {
+    let correct_col_value = 0;
+    let current_col_value = 0;
+    let style = {};
+
+    getColumn(n, this.state.solution).forEach(cell => {
+      correct_col_value += cell;
+    });
+    getColumn(n, this.state.fullMarks).forEach(cell => {
+      if(cell) {current_col_value ++;}
+    });
+    if (this.state.header_hints) {
+      if (correct_col_value == current_col_value) {
+        style.color = "gray";
+      }
+      else if (correct_col_value < current_col_value) {
+        style.color = "red";
+      }
+    }
+    return (
+      <div
+      className="col-heading"
+      key={n}
+      style={style}
+      >
+        {correct_col_value}
+      </div>
+    );
   }
 
   renderCell(n) {
@@ -150,7 +200,12 @@ class Puzzle extends React.Component {
         <button
           onClick={() => {this.toggle_fill_mode()}}
         >
-          Toggle fill mode (currently {this.state.fill_mode ? "ON" : "OFF"})
+          {this.state.fill_mode ? "Fill mode OFF" : "Fill mode ON"}
+        </button>
+        <button
+          onClick={() => {this.toggle_header_hints()}}
+        >
+          {this.state.header_hints ? "Header hints OFF" : "Header hints ON"}
         </button>
       </div>
     )
@@ -276,6 +331,12 @@ class Puzzle extends React.Component {
     this.setState({
       fill_mode: !this.state.fill_mode,
     })
+  }
+
+  toggle_header_hints() {
+    this.setState({
+      header_hints: !this.state.header_hints,
+    });
   }
 }
 
